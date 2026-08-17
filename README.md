@@ -1,6 +1,6 @@
 # Kifayat — website
 
-The public site for the **Kifayat** Android app. Three pages, no build step, no
+The public site for the **Kifayat** Android app. Four pages, no build step, no
 dependencies: plain HTML and one stylesheet, served by GitHub Pages.
 
 It exists because Google Play requires two live, public URLs before the app can
@@ -14,6 +14,10 @@ be published:
 `/` is a small landing page. It is not strictly required, but a deletion page
 hanging off a site with nothing else on it looks disposable, and Play asks that
 the deletion link be "relevant" and clearly tied to the app.
+
+`/confirmed/` is where the Supabase signup confirmation email lands. Also not
+Play-required — it exists because the default redirect went somewhere that did
+not exist.
 
 > **This repo must be public.** GitHub Free cannot publish Pages from a private
 > repository. Nothing sensitive belongs here — it is only the website.
@@ -105,13 +109,14 @@ Claims currently made, and what backs each:
 
 | Claim on the page | What must stay true in the app |
 |---|---|
-| No advertising, analytics or tracking | No analytics or ad SDK is ever added. **Adding a crash reporter changes this page** — a reporter collects diagnostics and must be disclosed |
+| No advertising, no **usage** analytics, no tracking | No ad SDK and no usage-analytics SDK is ever added. The wording is deliberately narrower than it was: Crashlytics landed on 2026-08-17, so a flat "no analytics" is no longer true. **`firebase_analytics` is the line not to cross** — it is behavioural analytics, and it also drags in the `AD_ID` permission, which would falsify the Ads declaration and the permission table in the same commit |
+| Crash reports carry no financial data | `redact()` in `lib/src/utils/crash_reporter.dart` keeps rebuilding reports from a type and a `Failure.code` rather than filtering error text, and `test/utils/log_message_purity_test.dart` keeps passing. If either goes, this page is lying about the one thing it promises most specifically |
 | Ledger encrypted on device | SQLCipher stays enabled, key stays in the Keystore |
 | Android backup disabled | `android:allowBackup="false"` stays in the manifest |
 | Everything travels over HTTPS | The app keeps refusing non-HTTPS URLs |
 | Biometrics never leave the device | Auth stays delegated to Android |
 | Notifications scheduled locally, no push service | No FCM or other push provider is added |
-| Only Supabase touches the data | No second processor is introduced |
+| Supabase and Google (Crashlytics) are the only processors | No **third** processor is introduced. Google was added on 2026-08-17 and receives crash diagnostics only — never ledger data, never account details. The sharing table on the policy lists exactly these two |
 | Permission table | The manifest's permission set matches the table exactly |
 | Deletion removes the account server-side first | The delete RPC keeps its server-first ordering |
 
