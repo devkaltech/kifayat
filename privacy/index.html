@@ -23,7 +23,7 @@
     kept, and how to get rid of it.
   </p>
   <p class="dates">
-    Effective 5 August 2026 · Last updated 5 August 2026
+    Effective 5 August 2026 · Last updated 17 August 2026
   </p>
 </header>
 
@@ -34,14 +34,15 @@
     <ul>
       <li>Kifayat stores your financial records <strong>encrypted on your own device</strong>.</li>
       <li>If you create an account, your records also sync to <strong>your private account on our server</strong>, over HTTPS.</li>
-      <li>There is <strong>no advertising, no analytics, and no tracking</strong> in this app. None.</li>
+      <li>There is <strong>no advertising, no usage analytics, and no tracking</strong> in this app.</li>
+      <li>The app <strong>does report its own crashes</strong> to us, with your financial details stripped out before they are sent. <a href="#crash-reports">What that means, exactly</a>.</li>
       <li>We <strong>never sell or share</strong> your data. There is nobody to sell it to.</li>
       <li>You can <strong>export everything</strong> or <strong>delete everything</strong>, from inside the app, at any time.</li>
       <li>Kifayat <strong>never asks for your bank login</strong> and has no connection to any bank.</li>
     </ul>
   </div>
   <p>
-    The rest of this page is the detail behind those six lines.
+    The rest of this page is the detail behind those seven lines.
   </p>
 
   <h2>Who we are</h2>
@@ -81,20 +82,67 @@
     <li>Whether the app lock is on</li>
   </ul>
 
+  <h3 id="crash-reports">4. Crash reports</h3>
+  <p>
+    When Kifayat crashes or hits an internal error, it sends us a report so the
+    fault can be found and fixed. This is the one thing the app sends that you
+    did not type, and it is worth being precise about.
+  </p>
+  <p><strong>What a report contains:</strong></p>
+  <ul>
+    <li>Where in our own code the fault happened — file names and line numbers</li>
+    <li>An error label from a fixed list we wrote, such as <code>local.write_failed</code></li>
+    <li>Your device model, operating system version, and the app version</li>
+    <li>A random identifier for the app installation, so we can tell "one person hit this fifty times" apart from "fifty people hit it once"</li>
+  </ul>
+  <p><strong>What a report cannot contain:</strong></p>
+  <ul>
+    <li>Amounts, balances, or any figure from your ledger</li>
+    <li>Your notes — not truncated, not partially masked, not present</li>
+    <li>Account or category names</li>
+    <li>Your email address, display name, or photo</li>
+    <li>Anything a database or network error quoted back at us, which is the usual way financial values leak into a crash report elsewhere</li>
+  </ul>
+  <p>
+    That second list is enforced in the app's code rather than promised. A crash
+    report is assembled from a fixed set of safe fields — an error type and a
+    code from a closed list — instead of being assembled from the error text and
+    then filtered. Nothing is sent and later scrubbed, because scrubbing is the
+    part that fails quietly. An automated test fails our build if any error
+    message stops being one of the fixed codes.
+  </p>
+  <p>
+    The identifier is per <em>installation</em>, not per person. It is not your
+    account, not your email, and not an advertising ID; it is regenerated if you
+    reinstall, and it cannot be connected to your ledger, which never leaves
+    your device unencrypted.
+  </p>
+  <p>
+    Crash reporting is handled by <strong>Firebase Crashlytics</strong>, a Google
+    service, acting for us. Reports are not used for advertising, and Google
+    Play requires us to have this working well enough to spot a bad release.
+  </p>
+
   <h2>What Kifayat does <em>not</em> collect</h2>
   <p>
     This list is exhaustive and deliberate. The app contains no code to do any
     of it:
   </p>
   <ul>
-    <li>No advertising, ad identifiers, or advertising SDKs</li>
-    <li>No analytics, usage tracking, or behavioural profiling</li>
+    <li>No advertising, ad identifiers, or advertising SDKs — the app explicitly refuses the Android advertising ID permission</li>
+    <li>No usage analytics, no behavioural profiling, no record of which screens you open or what you tap</li>
     <li>No location data of any kind</li>
     <li>No contacts, calendar, call logs or SMS</li>
     <li>No bank credentials, card numbers, or payment details</li>
     <li>No browsing history</li>
     <li>No access to your photo library — only the one image you hand it through Android's own photo picker</li>
   </ul>
+  <p>
+    Crash reports, described above, are the single exception to "the app sends
+    nothing we did not ask for", and they are diagnostics rather than analytics:
+    they tell us that something broke and where in our code, not what you were
+    doing or what you were worth.
+  </p>
 
   <h2>Where your data is stored</h2>
 
@@ -145,9 +193,20 @@
         <td>Hosting our database, sign-in and file storage</td>
         <td>Your account details and synced records, held on our behalf</td>
       </tr>
+      <tr>
+        <td>Google (Firebase Crashlytics)</td>
+        <td>Telling us when the app crashes, so it can be fixed</td>
+        <td>Crash diagnostics only — see <a href="#crash-reports">Crash reports</a>. No ledger data, no account details.</td>
+      </tr>
     </tbody>
   </table>
   </div>
+  <p>
+    Both act purely as our processors: they handle what we send on our
+    instructions and not for their own purposes. Neither receives your data for
+    advertising, and neither is sent your financial records — Supabase stores
+    them on our behalf, and Google is never sent them at all.
+  </p>
   <p>
     We would disclose data if the law genuinely compelled us to — a valid court
     order, for instance. Nothing else.
@@ -182,6 +241,7 @@
     <thead><tr><th>Permission</th><th>Why</th></tr></thead>
     <tbody>
       <tr><td><code>INTERNET</code></td><td>Signing in and syncing your data</td></tr>
+      <tr><td><code>ACCESS_NETWORK_STATE</code></td><td>Letting the crash reporter check whether there is a connection before it tries to send a report</td></tr>
       <tr><td><code>POST_NOTIFICATIONS</code></td><td>Showing the reminders you turned on</td></tr>
       <tr><td><code>RECEIVE_BOOT_COMPLETED</code></td><td>Restoring your scheduled reminders after a restart</td></tr>
       <tr><td><code>USE_BIOMETRIC</code>, <code>USE_FINGERPRINT</code></td><td>The optional app lock</td></tr>
@@ -190,7 +250,11 @@
   </table>
   </div>
   <p>
-    Kifayat requests no location, camera, contacts, storage or SMS permission.
+    That is the complete list — seven permissions, and the app requests nothing
+    else. Kifayat requests no location, camera, contacts, storage or SMS
+    permission, and it explicitly <em>refuses</em> the advertising ID
+    permission: the app's manifest strips it out even if some future library
+    tries to add it.
   </p>
 
   <h2>How long we keep it</h2>
@@ -199,6 +263,15 @@
     account, it is removed from our live systems straight away and purged from
     our encrypted backups within 30 days. Data held only on your device
     disappears the moment you delete it or uninstall the app.
+  </p>
+  <p>
+    <strong>Crash reports are the one exception</strong>, and we would rather
+    spell it out than have you find it. They are not attached to your account,
+    so deleting your account does not delete them — there is no link along which
+    to find them. They age out on their own after <strong>90 days</strong>. As
+    set out above, they contain no amounts, no notes, no account names and no
+    email address, so what survives those 90 days is a stack trace through our
+    own code and a device model.
   </p>
 
   <h2>Your rights</h2>
@@ -240,6 +313,17 @@
     If this policy changes, the date at the top of this page changes with it.
     Anything that materially affects how your data is handled will also be
     announced in the app before it takes effect.
+  </p>
+  <h3>17 August 2026</h3>
+  <p>
+    Added crash reporting, and said so. Until this version the app sent us
+    nothing at all when it broke, which meant a crash affecting every user on a
+    particular phone could go unnoticed for weeks. It now sends a crash report
+    with your financial data stripped out before sending — see
+    <a href="#crash-reports">Crash reports</a> for exactly what is and is not in
+    one. The <code>ACCESS_NETWORK_STATE</code> permission was added for the same
+    reason. Nothing else about how your data is handled has changed, and no
+    advertising or usage analytics has been added.
   </p>
 
   <h2>Contact</h2>
