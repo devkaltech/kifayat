@@ -109,15 +109,16 @@ Claims currently made, and what backs each:
 
 | Claim on the page | What must stay true in the app |
 |---|---|
-| No advertising, no **usage** analytics, no tracking | No ad SDK and no usage-analytics SDK is ever added. The wording is deliberately narrower than it was: Crashlytics landed on 2026-08-17, so a flat "no analytics" is no longer true. **`firebase_analytics` is the line not to cross** — it is behavioural analytics, and it also drags in the `AD_ID` permission, which would falsify the Ads declaration and the permission table in the same commit |
+| Transactions, amounts and notes are never sold or shared | The line held is **financial data**, not telemetry. `analytics_purity_test.dart` and `AnalyticsValue` having no `String` constructor are what keep it true. This replaced *"no usage analytics, no tracking"* on 2026-09-14: `firebase_analytics` and the advertising ID landed on 2026-08-29, and the claim was retired rather than patched. **The line now is an ad network inside the app** — that one stays never |
+| No adverts inside the app | No ad SDK is ever added. Advertising *for* Kifayat, including the advertising ID and remarketing, is a different question and is allowed — see `docs/privacy-constitution.md` §2, which exists because these two are easy to conflate |
 | Crash reports carry no financial data | `redact()` in `lib/src/utils/crash_reporter.dart` keeps rebuilding reports from a type and a `Failure.code` rather than filtering error text, and `test/utils/log_message_purity_test.dart` keeps passing. If either goes, this page is lying about the one thing it promises most specifically |
 | Ledger encrypted on device | SQLCipher stays enabled, key stays in the Keystore |
 | Android backup disabled | `android:allowBackup="false"` stays in the manifest |
 | Everything travels over HTTPS | The app keeps refusing non-HTTPS URLs |
 | Biometrics never leave the device | Auth stays delegated to Android |
 | Notifications scheduled locally, no push service | No FCM or other push provider is added |
-| Supabase and Google (Crashlytics) are the only processors | No **third** processor is introduced. Google was added on 2026-08-17 and receives crash diagnostics only — never ledger data, never account details. The sharing table on the policy lists exactly these two |
-| Permission table | The manifest's permission set matches the table exactly |
+| Supabase, Firebase and Google Play are the only outside services | No **fourth** is introduced. Supabase and Crashlytics are processors; Firebase Analytics is not — Google uses that data for its own ends, so the policy says *shared*, and so does the Data safety card. `privacy_constitution_test.dart` fails on any new network-reaching package until the closed list in `docs/privacy-constitution.md` §3 is updated |
+| Permission table | The **merged release** manifest's permission set matches the table exactly. Read it off a build, never from memory: `cd android && ./gradlew :app:processReleaseMainManifest`. It went from 6 entries to 13 on 2026-09-14 without one line of the app's own manifest changing — dependencies did it |
 | Deletion removes the account server-side first | The delete RPC keeps its server-first ordering |
 
 The permission table and the "what we don't collect" list are the two that rot

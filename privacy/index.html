@@ -23,7 +23,7 @@
     kept, and how to get rid of it.
   </p>
   <p class="dates">
-    Effective 5 August 2026 · Last updated 17 August 2026
+    Effective 5 August 2026 · Last updated 14 September 2026
   </p>
 </header>
 
@@ -34,15 +34,18 @@
     <ul>
       <li>Kifayat stores your financial records <strong>encrypted on your own device</strong>.</li>
       <li>If you create an account, your records also sync to <strong>your private account on our server</strong>, over HTTPS.</li>
-      <li>There is <strong>no advertising, no usage analytics, and no tracking</strong> in this app.</li>
-      <li>The app <strong>does report its own crashes</strong> to us, with your financial details stripped out before they are sent. <a href="#crash-reports">What that means, exactly</a>.</li>
-      <li>We <strong>never sell or share</strong> your data. There is nobody to sell it to.</li>
+      <li><strong>Your transactions, amounts and notes are never sold or shared</strong> with anyone, in any form.</li>
+      <li>There are <strong>no ads inside the app</strong>. We do use ordinary analytics &mdash; which screens get opened, which features get used &mdash; and an advertising ID, to understand the app and to measure which adverts bring people to it. <a href="#analytics">Never what you spend</a>.</li>
+      <li>The app <strong>reports its own crashes</strong>, with your financial details stripped out before they are sent. <a href="#crash-reports">What that means, exactly</a>.</li>
       <li>You can <strong>export everything</strong> or <strong>delete everything</strong>, from inside the app, at any time.</li>
       <li>Kifayat <strong>never asks for your bank login</strong> and has no connection to any bank.</li>
     </ul>
   </div>
   <p>
-    The rest of this page is the detail behind those seven lines.
+    The rest of this page is the detail behind those seven lines. Where a
+    line draws a distinction &mdash; between your money and your taps, between
+    advertising inside the app and advertising for it &mdash; the distinction is
+    the point, and the detail below says exactly where it falls.
   </p>
 
   <h2>Who we are</h2>
@@ -74,7 +77,18 @@
     <li>Budgets and their limits</li>
     <li>Recurring entries such as salary, rent or subscriptions</li>
     <li>Transfers between your own accounts</li>
+    <li><strong>Udhaar</strong> — money you have lent or borrowed, and the name you type for the person it is with</li>
+    <li><strong>Committees (kameti)</strong> — the agreement you record, what you have paid in, and when your payout falls</li>
+    <li><strong>Gold</strong> — the weight and purity of what you hold</li>
   </ul>
+  <p>
+    A note about the names in udhaar and committees. Those are other people, and
+    you typed them. They are stored the same way as everything else here:
+    encrypted on your device, synced only to your own account, never sold, never
+    shared, and never sent to any analytics or advertising service. Please enter
+    only as much as you need to recognise the person — a first name is usually
+    enough, and the app never asks for anyone's phone number or address.
+  </p>
 
   <h3>3. App preferences</h3>
   <ul>
@@ -123,14 +137,68 @@
     Play requires us to have this working well enough to spot a bad release.
   </p>
 
+  <h3 id="analytics">5. How the app is used, and the advertising ID</h3>
+  <p>
+    Kifayat sends us ordinary product analytics, through <strong>Firebase
+    Analytics</strong>, a Google service. This is the part of the policy most
+    apps leave vague, so here it is exactly.
+  </p>
+  <p><strong>What is sent:</strong></p>
+  <ul>
+    <li>Which screen you opened, which feature you used, which step of setup you reached — events with names like <code>transaction_added</code> and <code>budget_created</code></li>
+    <li>Plain numbers, yes/no flags, and fixed choices from a list we wrote — for example <em>how many</em> accounts you have, <em>whether</em> the app lock is on, or <em>which</em> of the transaction types you picked</li>
+    <li>Your device model, Android version, app version, country and language</li>
+    <li>Your <strong>Android advertising ID</strong>, and which advert or link brought you to the Play Store listing</li>
+  </ul>
+  <p><strong>What can never be sent:</strong></p>
+  <ul>
+    <li>Any amount, balance or total</li>
+    <li>Your notes, merchant names, or the name of anyone in udhaar or a committee</li>
+    <li>Names you gave your own accounts or categories</li>
+    <li>Any free text of any kind, from anywhere in the app</li>
+  </ul>
+  <p>
+    That second list is a property of the code, not a promise. Analytics values
+    in Kifayat can only be a number, a true/false, or one option from a fixed
+    list — there is physically no way to put a piece of text into one. An
+    automated test fails our build if that stops being true. So "we do not send
+    your spending" is not something we remember to do; it is something the app
+    is unable to do.
+  </p>
+  <p>
+    <strong>The advertising ID</strong> is a resettable number Android gives to
+    apps. We use it to measure which adverts actually bring people to Kifayat,
+    and to show the app to people like those who already use it. It is not
+    linked to your ledger and cannot be used to look up anything you have
+    entered. You can reset it, or switch it off entirely, in
+    <strong>Android Settings → Privacy → Ads</strong>, and the app keeps working
+    exactly as before.
+  </p>
+  <p>
+    Unlike Supabase and Crashlytics, which handle data purely on our
+    instructions, <strong>Google also uses analytics and advertising-ID data for
+    its own purposes</strong>. Under Google Play's own rules that counts as
+    <em>sharing</em>, and our Data safety listing says so. We would rather write
+    that here plainly than let you discover it on a form.
+  </p>
+
+  <h3>6. Where you came from</h3>
+  <p>
+    When you install Kifayat, Google Play tells the app which advert, link or
+    campaign you arrived through. That comes <em>from</em> Play rather than from
+    your phone — nothing about you is sent to get it — and we use it to work out
+    which of our adverts are worth paying for.
+  </p>
+
   <h2>What Kifayat does <em>not</em> collect</h2>
   <p>
     This list is exhaustive and deliberate. The app contains no code to do any
     of it:
   </p>
   <ul>
-    <li>No advertising, ad identifiers, or advertising SDKs — the app explicitly refuses the Android advertising ID permission</li>
-    <li>No usage analytics, no behavioural profiling, no record of which screens you open or what you tap</li>
+    <li><strong>No adverts inside the app.</strong> No banners, no sponsored rows, no ad network. A money app that sells screen space to a lender has picked a side, and it is not yours</li>
+    <li><strong>No selling of your financial data</strong>, to anyone, in any form, aggregated or otherwise</li>
+    <li>No profile of what you spend, what you earn, or what you owe — the analytics described above carry none of it</li>
     <li>No location data of any kind</li>
     <li>No contacts, calendar, call logs or SMS</li>
     <li>No bank credentials, card numbers, or payment details</li>
@@ -138,10 +206,11 @@
     <li>No access to your photo library — only the one image you hand it through Android's own photo picker</li>
   </ul>
   <p>
-    Crash reports, described above, are the single exception to "the app sends
-    nothing we did not ask for", and they are diagnostics rather than analytics:
-    they tell us that something broke and where in our code, not what you were
-    doing or what you were worth.
+    The line we hold is <strong>financial data</strong>, not telemetry as a
+    category. That is a narrower promise than "we collect nothing", and we make
+    it deliberately, because it is one we can actually keep. Which screens people
+    open tells us where the app confuses them. What you spend tells us nothing we
+    have any business knowing.
   </p>
 
   <h2>Where your data is stored</h2>
@@ -178,10 +247,12 @@
 
   <h2>Who we share it with</h2>
   <p>
-    <strong>Nobody.</strong> We do not sell your data, we do not share it for
-    advertising or marketing, and we do not hand it to data brokers.
+    <strong>Your financial records: nobody.</strong> We do not sell them, we do
+    not share them for advertising, and we do not hand them to data brokers.
+    Usage analytics is a different question, and it is answered honestly in the
+    table below rather than buried.
   </p>
-  <p>The only third party that touches it at all:</p>
+  <p>Every outside service that receives anything at all:</p>
   <div class="table-scroll">
   <table>
     <thead>
@@ -196,16 +267,38 @@
       <tr>
         <td>Google (Firebase Crashlytics)</td>
         <td>Telling us when the app crashes, so it can be fixed</td>
-        <td>Crash diagnostics only — see <a href="#crash-reports">Crash reports</a>. No ledger data, no account details.</td>
+        <td>Crash diagnostics only — see <a href="#crash-reports">Crash reports</a>. No ledger data, no account details</td>
+      </tr>
+      <tr>
+        <td>Google (Firebase Analytics)</td>
+        <td>Understanding which screens and features people use, and which adverts bring them here</td>
+        <td>Screen and feature events, numbers and fixed choices, device and country, and your advertising ID — see <a href="#analytics">above</a>. No amounts, no notes, no names</td>
+      </tr>
+      <tr>
+        <td>Google Play</td>
+        <td>Telling us which campaign you installed from; showing Play's own "rate this app" card and update prompts</td>
+        <td>Nothing of yours. These ask Play for something, or ask Play to display something. Play already knows you installed the app — it installed it</td>
       </tr>
     </tbody>
   </table>
   </div>
   <p>
-    Both act purely as our processors: they handle what we send on our
-    instructions and not for their own purposes. Neither receives your data for
-    advertising, and neither is sent your financial records — Supabase stores
-    them on our behalf, and Google is never sent them at all.
+    <strong>Supabase and Crashlytics are processors</strong> — they handle what
+    we send on our instructions and not for their own ends. Supabase stores your
+    ledger on our behalf; Crashlytics is never sent it at all.
+  </p>
+  <p>
+    <strong>Firebase Analytics is not.</strong> Google also uses that data for
+    its own purposes, which under Play's rules makes it <em>shared</em> rather
+    than merely collected, and our Data safety listing is filled in that way.
+    What it never receives is your money: no amount, no note, no name, by
+    construction rather than by policy.
+  </p>
+  <p>
+    That is the whole list. Adding a service to it is a deliberate decision in
+    our codebase, not a dependency upgrade — an automated test fails the build
+    when any new network-reaching library appears, until this list is updated to
+    match. The failure is the point.
   </p>
   <p>
     We would disclose data if the law genuinely compelled us to — a valid court
@@ -235,26 +328,65 @@
     whichever app you shared it with.
   </p>
 
+  <h3>Udhaar and committees — other people's names</h3>
+  <p>
+    When you record that someone owes you, you type their name. Kifayat treats
+    that exactly like your own data: encrypted on your device, synced only to
+    your own account, and never sent to analytics, advertising or anyone else.
+    The other person is not contacted, is not told, and has no account here —
+    this is your private record of an arrangement, not a shared one.
+  </p>
+
+  <h3>Hisaab Share</h3>
+  <p>
+    Sharing a balance builds a short piece of text on your device — a person's
+    name and what the balance is — and hands it to whichever app you pick, or
+    your clipboard. It is not sent to us, and there is no invitation and no
+    shared record. Once it leaves through WhatsApp or anything else, what
+    happens to it is governed by that app.
+  </p>
+
+  <h3>Gold rates</h3>
+  <p>
+    To value gold holdings the app fetches a current rate from our own server.
+    It is a read: the request asks for today's rate and tells us nothing about
+    what you hold. Your weights and valuations stay in your ledger.
+  </p>
+
   <h3>Permissions the app requests, and why</h3>
   <div class="table-scroll">
   <table>
     <thead><tr><th>Permission</th><th>Why</th></tr></thead>
     <tbody>
       <tr><td><code>INTERNET</code></td><td>Signing in and syncing your data</td></tr>
-      <tr><td><code>ACCESS_NETWORK_STATE</code></td><td>Letting the crash reporter check whether there is a connection before it tries to send a report</td></tr>
+      <tr><td><code>ACCESS_NETWORK_STATE</code></td><td>Checking there is a connection before trying to send anything</td></tr>
       <tr><td><code>POST_NOTIFICATIONS</code></td><td>Showing the reminders you turned on</td></tr>
       <tr><td><code>RECEIVE_BOOT_COMPLETED</code></td><td>Restoring your scheduled reminders after a restart</td></tr>
       <tr><td><code>USE_BIOMETRIC</code>, <code>USE_FINGERPRINT</code></td><td>The optional app lock</td></tr>
       <tr><td><code>VIBRATE</code></td><td>Haptic feedback</td></tr>
+      <tr><td><code>WAKE_LOCK</code></td><td>Letting a scheduled reminder finish waking the phone, and letting a queued report finish sending</td></tr>
+      <tr><td><code>AD_ID</code></td><td>Reading the advertising ID Android gives us, to measure which adverts bring people to Kifayat. Resettable by you in Android Settings → Privacy → Ads</td></tr>
+      <tr><td><code>ACCESS_ADSERVICES_AD_ID</code>, <code>ACCESS_ADSERVICES_ATTRIBUTION</code></td><td>Android's newer, more private way of doing the same advert measurement, used on Android 13 and above</td></tr>
+      <tr><td><code>BIND_GET_INSTALL_REFERRER_SERVICE</code></td><td>Asking Google Play which campaign you installed from</td></tr>
     </tbody>
   </table>
   </div>
   <p>
-    That is the complete list — seven permissions, and the app requests nothing
-    else. Kifayat requests no location, camera, contacts, storage or SMS
-    permission, and it explicitly <em>refuses</em> the advertising ID
-    permission: the app's manifest strips it out even if some future library
-    tries to add it.
+    That is the complete list, read off the built app rather than written from
+    memory. There is one more that never appears in Android's permission screen:
+    a private signature permission the app defines for its own internal
+    messaging, which grants nothing outside Kifayat.
+  </p>
+  <p>
+    <strong>Kifayat requests no location, camera, contacts, calendar, call log,
+    storage or SMS permission.</strong> Those are the ones that would let an app
+    reach into the rest of your phone, and none of them is here.
+  </p>
+  <p>
+    An earlier version of this page said the app refused the advertising ID.
+    That changed in this release, deliberately, and the table above now says so.
+    We would rather correct it in public than leave a flattering sentence
+    standing.
   </p>
 
   <h2>How long we keep it</h2>
@@ -265,13 +397,20 @@
     disappears the moment you delete it or uninstall the app.
   </p>
   <p>
-    <strong>Crash reports are the one exception</strong>, and we would rather
-    spell it out than have you find it. They are not attached to your account,
-    so deleting your account does not delete them — there is no link along which
-    to find them. They age out on their own after <strong>90 days</strong>. As
-    set out above, they contain no amounts, no notes, no account names and no
-    email address, so what survives those 90 days is a stack trace through our
-    own code and a device model.
+    <strong>Crash reports and analytics are the exceptions</strong>, and we would
+    rather spell that out than have you find it. Neither is attached to your
+    account, so deleting your account does not delete them — there is no link
+    along which to find them.
+  </p>
+  <ul>
+    <li><strong>Crash reports</strong> age out after <strong>90 days</strong>. What survives is a stack trace through our own code and a device model.</li>
+    <li><strong>Analytics events</strong> are held by Google for a limited window set on our account, then deleted. What survives is which screens were opened on some device in some country — never an amount, a note or a name.</li>
+  </ul>
+  <p>
+    You can cut the advertising ID out of this at any time, without leaving the
+    app, in <strong>Android Settings → Privacy → Ads</strong>. Resetting it makes
+    past events unattributable to your device; deleting it stops one being sent
+    at all.
   </p>
 
   <h2>Your rights</h2>
@@ -314,6 +453,27 @@
     Anything that materially affects how your data is handled will also be
     announced in the app before it takes effect.
   </p>
+  <h3>14 September 2026</h3>
+  <p>
+    The honest version of a change we could have described more gently. This
+    release adds <strong>usage analytics and the Android advertising ID</strong>,
+    so two claims this page used to make are now retired: that the app had no
+    analytics, and that it refused the advertising ID. Both are corrected in
+    place above rather than quietly dropped.
+  </p>
+  <p>
+    What has <em>not</em> changed is the part that matters: your transactions,
+    amounts, notes and the names in udhaar and committees are still never sold,
+    never shared, and still cannot reach an analytics or advertising service —
+    not because we promise it, but because the code cannot express it.
+  </p>
+  <p>
+    Also new in this release, and described above: <strong>udhaar</strong>,
+    <strong>committees</strong>, <strong>gold holdings</strong> and
+    <strong>Hisaab Share</strong>; the permission table has grown accordingly and
+    is now read directly off the built app.
+  </p>
+
   <h3>17 August 2026</h3>
   <p>
     Added crash reporting, and said so. Until this version the app sent us
