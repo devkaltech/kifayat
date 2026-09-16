@@ -23,7 +23,7 @@
     kept, and how to get rid of it.
   </p>
   <p class="dates">
-    Effective 5 August 2026 · Last updated 14 September 2026
+    Effective 5 August 2026 · Last updated 16 September 2026
   </p>
 </header>
 
@@ -349,8 +349,10 @@
   <h3>Gold rates</h3>
   <p>
     To value gold holdings the app fetches a current rate from our own server.
-    It is a read: the request asks for today's rate and tells us nothing about
-    what you hold. Your weights and valuations stay in your ledger.
+    When the rate it has is more than half a day old, the app first asks our
+    server to refresh it, and the server fetches the price from a public
+    currency feed. Neither request says anything about what you hold. Your
+    weights and valuations stay in your ledger.
   </p>
 
   <h3>Permissions the app requests, and why</h3>
@@ -453,6 +455,15 @@
     Anything that materially affects how your data is handled will also be
     announced in the app before it takes effect.
   </p>
+  <h3>16 September 2026</h3>
+  <p>
+    A correction to <strong>Gold rates</strong>. It said the app only reads a
+    rate from our server. The app can now also ask the server to refresh a rate
+    that is more than half a day old, and the server fetches it from a public
+    currency feed. That request carries nothing about what you hold, and nothing
+    else about how your data is handled has changed.
+  </p>
+
   <h3>14 September 2026</h3>
   <p>
     The honest version of a change we could have described more gently. This
